@@ -19,7 +19,7 @@ self.addEventListener("message", function(e) {
 			for (let i = len - 1; i >= cur; i--) {
 				let ip;
 				let ipLen = len - i;
-				if (elementCount + maxLength > maxElements) {
+				if (elementStart > i + 1 && elementCount + maxLength > maxElements) {
 					ip = isPalindrome[elementStart];
 					isPalindrome[elementStart] = null;
 					elementStart--;

@@ -85,7 +85,7 @@ window.addEventListener("DOMContentLoaded", function() {
 		}
 		// 計算の実行を要求する
 		let maxElementsValue = parseInt(max_elements.value);
-		if (isNaN(maxElementsValue) || maxElementsValue < str.length * 2) maxElementsValue = str.length * 2;
+		if (isNaN(maxElementsValue)) maxElementsValue = 1;
 		worker.postMessage({"str": str, "maxElements": maxElementsValue, "time": new Date()});
 	});
 	setEnableForm(true);
