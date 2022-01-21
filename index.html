@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>幸いさ計算機 (長い文字列にも対応)</title>
+<style>
+<!--
+ul.config_list li:not(:first-child) {
+	margin-top: 0.5em;
+}
+
+#result_detail span {
+	white-space: nowrap;
+}
+
+#result_detail span:not(.progress-span) span {
+	white-space: pre;
+	border: 1px solid;
+	padding: 0.3em;
+}
+
+#result_detail span:not(.progress-span) span:not(:first-child) {
+	margin-left: 0.4em;
+}
+
+#result_detail span.progress-span progress {
+	width: 20em;
+}
+
+#result_detail span.progress-span span {
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+	margin-left: 1em;
+}
+-->
+</style>
+<script src="hc.js"></script>
+</head>
+<body>
+<p style="margin: 0; padding: 0; position: absolute; top: 0px; right: 0px;">
+<!-- https://github.blog/2008-12-19-github-ribbons/ -->
+<a href="https://github.com/mikecat/happiness_calculator"><img loading="lazy" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+</p>
+
+<h1>幸いさ計算機 (長い文字列にも対応)</h1>
+<p>文字列の「幸いさ」を計算します。</p>
+<form name="mainform" method="POST" action="https://999.999.999.999:99999/" onsubmit="return false;">
+<p>
+<input type="text" name="target_str" value="" size="60" disabled="true">
+<input type="submit"name="calc_button" value="の「幸いさ」を計算" style="margin-left: 0.5em;" disabled="true">
+</p>
+</form>
+<noscript>
+<p>本ページでの計算にはJavaScriptが必要です。</p>
+</noscript>
+<details><summary>長い文字列用の設定</summary>
+<form name="longsupportform" method="POST" action="https://999.999.999.999:99999/">
+<ul class="config_list">
+<li><input type="number" name="long_threshold" min="0" value="5000">文字を超える文字列を「長い文字列」とみなす</li>
+<li>長い文字列の処理は<input type="number" name="num_workers" min="1" value="16">並列で行う</li>
+</ul>
+</form>
+</details>
+
+<h2>計算結果</h2>
+<div id="result_detail">
+<span style="visibility: hidden;">placeholder</span>
+</div>
+<p>文字列の長さ：<span id="num_of_chars"></span></p>
+<p>回文の数：<span id="num_of_palindromes"></span></p>
+<p>「幸いさ」：<span id="happiness"></span></p>
+<p>計算時間：<span id="elapsed_time"></span></p>
+
+<h2>「幸いさ」について</h2>
+<p>
+文字列の「幸いさ」とは、2022年1月16日(日)に行われた大学入学共通テストの「情報関係基礎」第2問で導入された概念であり、<br>
+「文字列の長さ」を「その文字列を作るために連結する最も少ない回文の数」で割った値です。
+</p><p>
+使う回文の数を求める部分は、この問題の特殊な場合(全ての長さにおけるコストが1の場合)のようです。<br>
+<a href="https://atcoder.jp/contests/indeednow-finalb-open/tasks/indeednow_2015_finalb_c">C - Palindrome Concatenation</a>
+</p><p>
+ここに、他の方が作った幸いさ計算機があります。<br>
+<a href="https://ptt-lab.com/kikkik">幸いさ計算機 - ペチラボ</a><br>
+しかし、この幸いさ計算機は、<a href="https://twitter.com/fairly_lettuce/status/1484177439589027842">長さが1e5の文字列を流し込むとOut of Memoryが出たという報告</a>があります。<br>
+</p>
+
+</body>
+</html>
