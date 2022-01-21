@@ -15,19 +15,23 @@ self.addEventListener("message", function(e) {
 			// 各部分が回文かを表すテーブルを作成する
 			isPalindrome.fill(null);
 			let elementCount = 0, elementStart = len - 1;
+			let maxLength = len - cur;
 			for (let i = len - 1; i >= cur; i--) {
-				elementCount += len - i;
-				while (elementCount > maxElements) {
-					elementCount -= isPalindrome[elementStart].length;
+				let ip;
+				let ipLen = len - i;
+				if (elementCount + maxLength > maxElements) {
+					ip = isPalindrome[elementStart];
 					isPalindrome[elementStart] = null;
 					elementStart--;
+				} else {
+					ip = Array(maxLength);
+					elementCount += maxLength;
 				}
-				const ip = Array(len - i);
 				ip[0] = true;
 				if (ip.length > 1) {
 					ip[1] = str[i] === str[i + 1];
 				}
-				for (let j = 2; j < ip.length; j++) {
+				for (let j = 2; j < ipLen; j++) {
 					ip[j] = isPalindrome[i + 1][j - 2] && str[i] === str[i + j];
 				}
 				isPalindrome[i] = ip;
