@@ -42,12 +42,6 @@ window.addEventListener("DOMContentLoaded", function() {
 		result_detail.appendChild(d);
 	};
 
-	const smallWorker = new Worker("hc_worker_small.js");
-	smallWorker.addEventListener("message", function(e) {
-		renderResult(e.data.len, e.data.pnum, e.data.division, e.data.startTime);
-		setEnableForm(true);
-	});
-
 	const worker = new Worker("hc_worker.js");
 	worker.addEventListener("message", function(e) {
 		if (e.data.kind === "progress") {
@@ -95,13 +89,7 @@ window.addEventListener("DOMContentLoaded", function() {
 			str.push(c);
 		}
 		// 計算の実行を要求する
-		const longThresholdValue = parseInt(long_threshold.value);
-		if (isNaN(longThresholdValue) || target_str.value.length <= longThresholdValue) {
-			// 長くない文字列
-			smallWorker.postMessage({"str": str, "time": new Date()});
-		} else {
-			worker.postMessage({"str": str, "time": new Date()});
-		}
+		worker.postMessage({"str": str, "time": new Date()});
 	});
 	setEnableForm(true);
 	if (location.hash !== "") {
