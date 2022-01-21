@@ -4,7 +4,6 @@ window.addEventListener("DOMContentLoaded", function() {
 	const target_str = document.mainform.target_str;
 	const calc_button = document.mainform.calc_button;
 	const long_threshold = document.longsupportform.long_threshold;
-	const num_workers = document.longsupportform.num_workers;
 
 	const result_detail = document.getElementById("result_detail");
 	const num_of_chars = document.getElementById("num_of_chars");
@@ -16,7 +15,6 @@ window.addEventListener("DOMContentLoaded", function() {
 		target_str.disabled = !enable;
 		calc_button.disabled = !enable;
 		long_threshold.disabled = !enable;
-		num_workers.disabled = !enable;
 	};
 
 	const renderResult = function(len, pnum, division, startTime) {
@@ -102,10 +100,7 @@ window.addEventListener("DOMContentLoaded", function() {
 			// 長くない文字列
 			smallWorker.postMessage({"str": str, "time": new Date()});
 		} else {
-			// 長い文字列
-			let numThreads = parseInt(num_workers.value);
-			if (isNaN(numThreads) || numThreads < 1) numThreads = 1;
-			worker.postMessage({"str": str, "numThreads": numThreads, "time": new Date()});
+			worker.postMessage({"str": str, "time": new Date()});
 		}
 	});
 	setEnableForm(true);
