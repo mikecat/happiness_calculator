@@ -24,7 +24,7 @@ self.addEventListener("message", function(e) {
 					isPalindrome[elementStart] = null;
 					elementStart--;
 				} else {
-					ip = Array(maxLength);
+					ip = new Uint8Array(maxLength);
 					elementCount += maxLength;
 				}
 				ip[0] = true;
