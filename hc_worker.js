@@ -15,7 +15,7 @@ self.addEventListener("message", function(e) {
 			// 各部分が回文かを表すテーブルを作成する
 			isPalindrome.fill(null);
 			let elementCount = 0, elementStart = len - 1;
-			let maxLength = len - cur;
+			let maxLength = (len - cur + 31) >> 5;
 			for (let i = len - 1; i >= cur; i--) {
 				let ip;
 				let ipLen = len - i;
@@ -24,15 +24,19 @@ self.addEventListener("message", function(e) {
 					isPalindrome[elementStart] = null;
 					elementStart--;
 				} else {
-					ip = new Uint8Array(maxLength);
+					ip = new Uint32Array(maxLength);
 					elementCount += maxLength;
 				}
-				ip[0] = true;
-				if (ip.length > 1) {
-					ip[1] = str[i] === str[i + 1];
+				ip.fill(0);
+				ip[0] = 1;
+				if (ipLen > 1) {
+					if (str[i] === str[i + 1]) ip[0] |= 2;
 				}
 				for (let j = 2; j < ipLen; j++) {
-					ip[j] = isPalindrome[i + 1][j - 2] && str[i] === str[i + j];
+					const idx = j - 2;
+					if ((isPalindrome[i + 1][idx >> 5] & (1 << (idx & 0x1f))) && str[i] === str[i + j]) {
+						ip[j >> 5] |= 1 << (j & 0x1f);
+					}
 				}
 				isPalindrome[i] = ip;
 				const curTime = new Date();
@@ -43,7 +47,8 @@ self.addEventListener("message", function(e) {
 			}
 		}
 		for (let i = cur + 1; i <= len; i++) {
-			if (isPalindrome[cur][i - cur - 1] && minCost[cur] + 1 < minCost[i]) {
+			const idx = i - cur - 1;
+			if ((isPalindrome[cur][idx >> 5] & (1 << (idx & 0x1f))) && minCost[cur] + 1 < minCost[i]) {
 				minCost[i] = minCost[cur] + 1;
 				comeFrom[i] = cur;
 			}
