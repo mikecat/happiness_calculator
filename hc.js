@@ -3,18 +3,24 @@
 window.addEventListener("DOMContentLoaded", function() {
 	const target_str = document.mainform.target_str;
 	const calc_button = document.mainform.calc_button;
-	const long_threshold = document.longsupportform.long_threshold;
+	const max_elements = document.configform.max_elements;
 
+	const result_area = document.getElementById("result_area");
 	const result_detail = document.getElementById("result_detail");
 	const num_of_chars = document.getElementById("num_of_chars");
 	const num_of_palindromes = document.getElementById("num_of_palindromes");
 	const happiness = document.getElementById("happiness");
 	const elapsed_time = document.getElementById("elapsed_time");
 
+	const progress_area = document.getElementById("progress_area");
+	const all_progress = document.getElementById("all_progress");
+	const all_progress_text = document.getElementById("all_progress_text");
+	const table_progress = document.getElementById("table_progress");
+	const table_progress_text = document.getElementById("table_progress_text");
+
 	const setEnableForm = function(enable) {
 		target_str.disabled = !enable;
 		calc_button.disabled = !enable;
-		long_threshold.disabled = !enable;
 	};
 
 	const renderResult = function(len, pnum, division, startTime) {
@@ -45,26 +51,15 @@ window.addEventListener("DOMContentLoaded", function() {
 	const worker = new Worker("hc_worker.js");
 	worker.addEventListener("message", function(e) {
 		if (e.data.kind === "progress") {
-			let progress = document.getElementById("progress_bar"), progressText;
-			if (progress === null) {
-				const pspan = document.createElement("span");
-				pspan.setAttribute("class", "progress-span");
-				progress = document.createElement("progress");
-				progress.setAttribute("id", "progress_bar");
-				pspan.appendChild(progress);
-				progressText = document.createElement("span");
-				progressText.setAttribute("id", "progress_text");
-				pspan.appendChild(progressText);
-				while (result_detail.firstChild) {
-					result_detail.removeChild(result_detail.firstChild);
-				}
-				result_detail.appendChild(pspan);
-			} else {
-				progressText = document.getElementById("progress_text");
-			}
-			progress.value = e.data.progress;
-			progressText.textContent = "" + ~~(e.data.progress * 100) + "." + (~~(e.data.progress * 1000) % 10) + " %";
+			result_area.style.visibility = "hidden";
+			progress_area.style.visibility = "visible";
+			all_progress.value = e.data.all;
+			all_progress_text.textContent = "" + ~~(e.data.all * 100) + "." + (~~(e.data.all * 1000) % 10) + " %";
+			table_progress.value = e.data.table;
+			table_progress_text.textContent = "" + ~~(e.data.table * 100) + "." + (~~(e.data.table * 1000) % 10) + " %";
 		} else {
+			result_area.style.visibility = "visible";
+			progress_area.style.visibility = "hidden";
 			renderResult(e.data.len, e.data.pnum, e.data.division, e.data.startTime);
 			setEnableForm(true);
 		}
@@ -89,7 +84,9 @@ window.addEventListener("DOMContentLoaded", function() {
 			str.push(c);
 		}
 		// 計算の実行を要求する
-		worker.postMessage({"str": str, "time": new Date()});
+		let maxElementsValue = parseInt(max_elements.value);
+		if (isNaN(maxElementsValue) || maxElementsValue < str.length * 2) maxElementsValue = str.length * 2;
+		worker.postMessage({"str": str, "maxElements": maxElementsValue, "time": new Date()});
 	});
 	setEnableForm(true);
 	if (location.hash !== "") {

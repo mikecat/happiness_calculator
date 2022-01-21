@@ -13,23 +13,21 @@ ul.config_list li:not(:first-child) {
 	white-space: nowrap;
 }
 
-#result_detail span:not(.progress-span) span {
+#result_detail span span {
 	white-space: pre;
 	border: 1px solid;
 	padding: 0.3em;
 }
 
-#result_detail span:not(.progress-span) span:not(:first-child) {
+#result_detail span span:not(:first-child) {
 	margin-left: 0.4em;
 }
 
-#result_detail span.progress-span progress {
+#progress_area progress {
 	width: 20em;
 }
 
-#result_detail span.progress-span span {
-	padding-top: 0.3em;
-	padding-bottom: 0.3em;
+#progress_area span {
 	margin-left: 1em;
 }
 -->
@@ -53,15 +51,17 @@ ul.config_list li:not(:first-child) {
 <noscript>
 <p>本ページでの計算にはJavaScriptが必要です。</p>
 </noscript>
-<details><summary>長い文字列用の設定</summary>
-<form name="longsupportform" method="POST" action="https://999.999.999.999:99999/">
+<details><summary>詳細設定</summary>
+<form name="configform" method="POST" action="https://999.999.999.999:99999/">
 <ul class="config_list">
-<li><input type="number" name="long_threshold" min="0" value="5000">文字を超える文字列を「長い文字列」とみなす</li>
+<li>回文判定テーブルに保持する最大要素数：<input type="number" name="max_elements" min="0" value="200000000"></li>
 </ul>
 </form>
 </details>
 
 <h2>計算結果</h2>
+<div style="position: relative;">
+<div id="result_area">
 <div id="result_detail">
 <span style="visibility: hidden;">placeholder</span>
 </div>
@@ -69,6 +69,12 @@ ul.config_list li:not(:first-child) {
 <p>回文の数：<span id="num_of_palindromes"></span></p>
 <p>「幸いさ」：<span id="happiness"></span></p>
 <p>計算時間：<span id="elapsed_time"></span></p>
+</div>
+<div id="progress_area" style="position: absolute; top: 0px; left: 0px; visibility: hidden;">
+<p>区切りの探索：<progress id="all_progress"></progress><span id="all_progress_text">0.0 %</span></p>
+<p>回文判定：<progress id="table_progress"></progress><span id="table_progress_text">0.0 %</span></p>
+</div>
+</div>
 
 <h2>「幸いさ」について</h2>
 <p>
