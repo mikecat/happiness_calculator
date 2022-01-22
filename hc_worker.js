@@ -1,7 +1,23 @@
 "use strict";
 
 self.addEventListener("message", function(e) {
-	const str = e.data.str;
+	// サロゲートペアを考慮し、文字の配列を作成する
+	const rawStr = e.data.str;
+	const str = [], chars = [];
+	for (let i = 0; i < rawStr.length; i++) {
+		const c = rawStr.charCodeAt(i);
+		if (0xd800 <= c && c <= 0xdbff && i + 1 < rawStr.length) {
+			const c2 = rawStr.charCodeAt(i + 1);
+			if (0xdc00 <= c2 && c2 <= 0xdfff) {
+				str.push(((c - 0xd800) << 10) + (c2 - 0xdc00) + 0x10000);
+				chars.push(rawStr.substring(i, i + 2));
+				i++;
+				continue;
+			}
+		}
+		str.push(c);
+		chars.push(rawStr.charAt(i));
+	}
 	const len = str.length;
 	let reportedTime = new Date();
 	// 前の頂点から順に、そこに来れる頂点を考えて最小コストを求める
@@ -42,17 +58,7 @@ self.addEventListener("message", function(e) {
 	// 探索結果を返す
 	const division = [];
 	for (let pos = len; pos > 0; pos = comeFrom[pos]) {
-		let segment = "";
-		for (let i = comeFrom[pos]; i < pos; i++) {
-			const c = str[i];
-			if (c < 0x10000) {
-				segment += String.fromCharCode(c);
-			} else {
-				const c2 = c - 0x10000;
-				segment += String.fromCharCode(((c2 >> 10) & 0x3ff) + 0xd800) + String.fromCharCode((c2 & 0x3ff) + 0xdc00);
-			}
-		}
-		division.push(segment);
+		division.push(chars.splice(comeFrom[pos], pos).join(""));
 	}
 	self.postMessage({"kind": "result", "len": len, "pnum": minCost[len], "division": division.reverse(), "startTime": e.data.time});
 });

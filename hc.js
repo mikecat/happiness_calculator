@@ -63,23 +63,8 @@ window.addEventListener("DOMContentLoaded", function() {
 	document.mainform.addEventListener("submit", function(e) {
 		e.preventDefault();
 		setEnableForm(false);
-		// サロゲートペアを考慮し、文字の配列を作成する
-		const rawStr = target_str.value;
-		const str = [], chars = [];
-		for (let i = 0; i < rawStr.length; i++) {
-			const c = rawStr.charCodeAt(i);
-			if (0xd800 <= c && c <= 0xdbff && i + 1 < rawStr.length) {
-				const c2 = rawStr.charCodeAt(i + 1);
-				if (0xdc00 <= c2 && c2 <= 0xdfff) {
-					str.push(((c - 0xd800) << 10) + (c2 - 0xdc00) + 0x10000);
-					i++;
-					continue;
-				}
-			}
-			str.push(c);
-		}
 		// 計算の実行を要求する
-		worker.postMessage({"str": str, "time": new Date()});
+		worker.postMessage({"str": target_str.value, "time": new Date()});
 	});
 	setEnableForm(true);
 	if (location.hash !== "") {
