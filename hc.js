@@ -3,7 +3,6 @@
 window.addEventListener("DOMContentLoaded", function() {
 	const target_str = document.mainform.target_str;
 	const calc_button = document.mainform.calc_button;
-	const max_elements = document.configform.max_elements;
 
 	const result_area = document.getElementById("result_area");
 	const result_detail = document.getElementById("result_detail");
@@ -13,10 +12,8 @@ window.addEventListener("DOMContentLoaded", function() {
 	const elapsed_time = document.getElementById("elapsed_time");
 
 	const progress_area = document.getElementById("progress_area");
-	const all_progress = document.getElementById("all_progress");
-	const all_progress_text = document.getElementById("all_progress_text");
-	const table_progress = document.getElementById("table_progress");
-	const table_progress_text = document.getElementById("table_progress_text");
+	const progress_bar = document.getElementById("progress_bar");
+	const progress_text = document.getElementById("progress_text");
 
 	const setEnableForm = function(enable) {
 		target_str.disabled = !enable;
@@ -53,10 +50,8 @@ window.addEventListener("DOMContentLoaded", function() {
 		if (e.data.kind === "progress") {
 			result_area.style.visibility = "hidden";
 			progress_area.style.visibility = "visible";
-			all_progress.value = e.data.all;
-			all_progress_text.textContent = "" + ~~(e.data.all * 100) + "." + (~~(e.data.all * 1000) % 10) + " %";
-			table_progress.value = e.data.table;
-			table_progress_text.textContent = "" + ~~(e.data.table * 100) + "." + (~~(e.data.table * 1000) % 10) + " %";
+			progress_bar.value = e.data.all;
+			progress_text.textContent = "" + ~~(e.data.all * 100) + "." + (~~(e.data.all * 1000) % 10) + " %";
 		} else {
 			result_area.style.visibility = "visible";
 			progress_area.style.visibility = "hidden";
@@ -84,9 +79,7 @@ window.addEventListener("DOMContentLoaded", function() {
 			str.push(c);
 		}
 		// 計算の実行を要求する
-		let maxElementsValue = parseInt(max_elements.value);
-		if (isNaN(maxElementsValue)) maxElementsValue = 1;
-		worker.postMessage({"str": str, "maxElements": maxElementsValue, "time": new Date()});
+		worker.postMessage({"str": str, "time": new Date()});
 	});
 	setEnableForm(true);
 	if (location.hash !== "") {

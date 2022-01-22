@@ -3,56 +3,36 @@
 self.addEventListener("message", function(e) {
 	const str = e.data.str;
 	const len = str.length;
-	const maxElements = e.data.maxElements;
 	let reportedTime = new Date();
-	// 前の頂点から順に、そこから行ける頂点の最短コストを更新する
-	const isPalindrome = Array(len).fill(null);
-	const minCost = Array(len + 1).fill(len + 1);
+	// 前の頂点から順に、そこに来れる頂点を考えて最小コストを求める
+	const isPalindrome = [Array(len), Array(len)];
+	const minCost = Array(len + 1);
 	const comeFrom = Array(len + 1);
 	minCost[0] = 0;
-	for (let cur = 0; cur < len; cur++) {
-		if (isPalindrome[cur] === null) {
-			// 各部分が回文かを表すテーブルを作成する
-			isPalindrome.fill(null);
-			let elementCount = 0, elementStart = len - 1;
-			let maxLength = (len - cur + 31) >> 5;
-			for (let i = len - 1; i >= cur; i--) {
-				let ip;
-				let ipLen = len - i;
-				if (elementStart > i + 1 && elementCount + maxLength > maxElements) {
-					ip = isPalindrome[elementStart];
-					isPalindrome[elementStart] = null;
-					elementStart--;
-				} else {
-					ip = new Uint32Array(maxLength);
-					elementCount += maxLength;
-				}
-				ip.fill(0);
-				ip[0] = 1;
-				if (ipLen > 1) {
-					if (str[i] === str[i + 1]) ip[0] |= 2;
-				}
-				for (let j = 2; j < ipLen; j++) {
-					const idx = j - 2;
-					if ((isPalindrome[i + 1][idx >> 5] & (1 << (idx & 0x1f))) && str[i] === str[i + j]) {
-						ip[j >> 5] |= 1 << (j & 0x1f);
-					}
-				}
-				isPalindrome[i] = ip;
-				const curTime = new Date();
-				if (curTime.getTime() - reportedTime.getTime() >= 20) {
-					self.postMessage({"kind": "progress", "all": cur / len, "table": (len - 1 - i) / (len - 1 - cur)});
-					reportedTime = curTime;
-				}
+	if (len >= 1) {
+		minCost[1] = 1;
+		comeFrom[1] = 0;
+	}
+	for (let cur = 2; cur <= len; cur++) {
+		// 各位置からcurまでの部分が回文かを表すテーブルを作成する
+		const prevPalindrome = isPalindrome[cur % 2], curPalindrome = isPalindrome[1 - cur % 2];
+		// 3文字以上の場合、回文 iff 最初と最後の文字が同じ、かつその間が回文
+		for (let i = 0; i < cur - 2; i++) {
+			curPalindrome[i] = prevPalindrome[i + 1] && str[i] == str[cur - 1];
+		}
+		// 2文字の場合、回文 iff その2文字が同じ
+		curPalindrome[cur - 2] = str[cur - 2] == str[cur - 1];
+		// 1文字の場合、常に回文
+		curPalindrome[cur - 1] = true;
+		// 作成したテーブルに基づき、来れる場所の中でコストが最小の場所を探す
+		minCost[cur] = len + 1;
+		for (let i = 0; i < cur; i++) {
+			if (curPalindrome[i] && minCost[i] + 1 < minCost[cur]) {
+				minCost[cur] = minCost[i] + 1;
+				comeFrom[cur] = i;
 			}
 		}
-		for (let i = cur + 1; i <= len; i++) {
-			const idx = i - cur - 1;
-			if ((isPalindrome[cur][idx >> 5] & (1 << (idx & 0x1f))) && minCost[cur] + 1 < minCost[i]) {
-				minCost[i] = minCost[cur] + 1;
-				comeFrom[i] = cur;
-			}
-		}
+		// ある程度時間が経っていたら、進捗を報告する
 		const curTime = new Date();
 		if (curTime.getTime() - reportedTime.getTime() >= 20) {
 			self.postMessage({"kind": "progress", "all": (cur + 1) / len, "table": 1});

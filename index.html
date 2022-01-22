@@ -51,13 +51,6 @@ ul.config_list li:not(:first-child) {
 <noscript>
 <p>本ページでの計算にはJavaScriptが必要です。</p>
 </noscript>
-<details><summary>詳細設定</summary>
-<form name="configform" method="POST" action="https://999.999.999.999:99999/">
-<ul class="config_list">
-<li>回文判定テーブルに保持する最大要素数：<input type="number" name="max_elements" min="0" value="100000000"></li>
-</ul>
-</form>
-</details>
 
 <h2>計算結果</h2>
 <div style="position: relative;">
@@ -71,8 +64,7 @@ ul.config_list li:not(:first-child) {
 <p>計算時間：<span id="elapsed_time"></span></p>
 </div>
 <div id="progress_area" style="position: absolute; top: 0px; left: 0px; visibility: hidden;">
-<p>区切りの探索：<progress id="all_progress"></progress><span id="all_progress_text">0.0 %</span></p>
-<p>回文判定：<progress id="table_progress"></progress><span id="table_progress_text">0.0 %</span></p>
+<p><progress id="progress_bar"></progress><span id="progress_text">0.0 %</span></p>
 </div>
 </div>
 
