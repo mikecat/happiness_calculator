@@ -29,6 +29,7 @@ self.addEventListener("message", function(e) {
 		minCost[1] = 1;
 		comeFrom[1] = 0;
 	}
+	const progressAll = len * (len + 1);
 	for (let cur = 2; cur <= len; cur++) {
 		// 各位置からcurまでの部分が回文かを表すテーブルを作成する
 		const prevPalindrome = isPalindrome[cur % 2], curPalindrome = isPalindrome[1 - cur % 2];
@@ -51,7 +52,7 @@ self.addEventListener("message", function(e) {
 		// ある程度時間が経っていたら、進捗を報告する
 		const curTime = new Date();
 		if (curTime.getTime() - reportedTime.getTime() >= 20) {
-			self.postMessage({"kind": "progress", "all": (cur + 1) / len, "table": 1});
+			self.postMessage({"kind": "progress", "progress": cur * (cur + 1) / progressAll});
 			reportedTime = curTime;
 		}
 	}

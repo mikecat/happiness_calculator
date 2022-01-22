@@ -50,8 +50,8 @@ window.addEventListener("DOMContentLoaded", function() {
 		if (e.data.kind === "progress") {
 			result_area.style.visibility = "hidden";
 			progress_area.style.visibility = "visible";
-			progress_bar.value = e.data.all;
-			progress_text.textContent = "" + ~~(e.data.all * 100) + "." + (~~(e.data.all * 1000) % 10) + " %";
+			progress_bar.value = e.data.progress;
+			progress_text.textContent = "" + ~~(e.data.progress * 100) + "." + (~~(e.data.progress * 1000) % 10) + " %";
 		} else {
 			result_area.style.visibility = "visible";
 			progress_area.style.visibility = "hidden";
