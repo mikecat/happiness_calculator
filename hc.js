@@ -137,7 +137,7 @@ window.addEventListener("DOMContentLoaded", function() {
 	});
 	setEnableForm(true);
 	if (location.hash !== "") {
-		document.mainform.target_str.value = location.hash.substring(1);
+		document.mainform.target_str.value = decodeURIComponent(location.hash.substring(1));
 		document.mainform.calc_button.click();
 	}
 });
